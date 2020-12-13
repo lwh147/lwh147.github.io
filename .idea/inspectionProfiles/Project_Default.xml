@@ -72,7 +72,7 @@
       <option name="IGNORE_JAVADOC_PERIOD" value="true" />
       <option name="IGNORE_DUPLICATED_THROWS" value="false" />
       <option name="IGNORE_POINT_TO_ITSELF" value="false" />
-      <option name="myAdditionalJavadocTags" value="ClassName,Description,Author,Date,Version,InterfaceName,Param" />
+      <option name="myAdditionalJavadocTags" value="ClassName,Description,Author,Date,Version,InterfaceName,Param,date" />
     </inspection_tool>
     <inspection_tool class="SpellCheckingInspection" enabled="false" level="TYPO" enabled_by_default="false">
       <option name="processCode" value="true" />
