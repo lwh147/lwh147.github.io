@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div id="page-body">
-      <show-down url="docs/hello.md" highlight-style="arta"/>
+      <show-down url="md/hello.md" highlight-style="arta"/>
     </div>
     <music-player :fixed="true" server="netease" type="playlist" id="905974655"/>
     <spring-loader id="loader" theme="white" :show="springLoaderShow"/>
