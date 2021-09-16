@@ -62,3 +62,19 @@ gitlab**网页上的merge操作**如果出现冲突，则会要求手动修改�
 在git bash中，运行命令： `git config --global core.longpaths true`
 
 说明：--global是该参数的使用范围，如果只想对本版本库设置该参数，只要在上述命令中去掉--global即可
+
+## 为已被纳入版本控制的文件添加.gitignore规则后使其生效
+
+对于一些已经添加到git版本控制中的文件或文件夹，如果想取消其版本控制，在添加.gitignore规则后这些文件或文件夹还是会被追踪，提交时还会出现在commit列表中
+
+这时应该先把本地的文件追踪缓存删除，重新执行add
+
+```text
+// 删除要取消追踪的文件或文件夹缓存
+git rm -r --cached **/target
+// 重新根据.gitignore添加要提交的文件
+git add .
+
+// 可以提交了
+git commit -m "update .gitignore"
+```

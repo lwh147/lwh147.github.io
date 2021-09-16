@@ -591,29 +591,31 @@ public class RepeatedlyReadFilter implements Filter {
 }
 ```
 
-# 常见问题
+# 线程安全的ServletRequest获取方式
 
-## 测试
+```java
+  ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
+```
+
+# 常见问题
 
 SpringBoot项目可以有多个配置文件 `application-[配置名].yml` ，可以在IDEA启动选项的 `active profiles` 选项进行指定，也可以在默认配置文件中进行指定： `spring.profiles.active: 配置名`
 
-## 传参
-
 请求参数params对象中的参数值为 `undefined` 时url中不会出现该参数，即该参数不会被发送
-
-## 注解
 
 `@Controller` 、 `@Service` 、 `@Repository` 注解应该打到实现类上，必要时指定 Bean 名称
 
-针对 Controller 层可以将除 `@Controller` 注解外的其它注解（比如@GetMapping）打到接口类上（[点击](https://www.cnblogs.com/lwh147/p/15167380.html)查看原因）；而 Service、Repository 层注解都必须打到实现类上，因为这些 Bean 会被依赖，接口只是一个行为规范，并不能被实例化当作依赖注入，而且我们需要的是具体的实现，一个接口可能有多个实现，所以也会避免一些不必要的问题
+针对 Controller 层可以将除 `@Controller` 注解外的其它注解（比如@RequestMapping）放到到接口类中（[点击](https://www.cnblogs.com/lwh147/p/15167380.html)查看原因）
 
-## 其他
+### 前端发送请求，后端成功接收到数据，但是前端报404错误
 
-**A component required a bean of type 'xxx' that could not be found**
+Controller没有打 `@RequestBody` 注解，导致SpringBoot认为Controller返回值是一个视图，找不到对应的视图所以报404
+
+### A component required a bean of type 'xxx' that could not be found
 
 如果type不是自己创建的Bean类型：
 
-没有对项目中某个依赖框架进行配置，即没有添加 `@Configuration` 或 `@Bean` 注解的配置Bean，例如引入JetCache框架必须要进行配置，否则会报该错误
+没有对项目中某个依赖框架进行配置，即没有添加 `@Configuration` 或 `@Bean` 注解的配置Bean
 
 如果type是自己创建的Bean类型：
 
@@ -621,10 +623,6 @@ SpringBoot项目可以有多个配置文件 `application-[配置名].yml` ，可
 * 如果不是上述原因，检查是否需要配置 `@ComponentScan` 指定扫描包但是并没有指定
 * 如果没有上述两个问题，检查是否存在依赖循环
 
-**线程安全的ServletRequest获取方式**
+### SpringBoot整合Thymeleaf项目，配置和路径等都无误但是访问视图404
 
-```java
-  ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest();
-```
-
-SpringBoot整合Thymeleaf项目，配置和路径等都无误但是访问视图404，检查SpringBoot版本和Thymeleaf版本是否匹配
+检查SpringBoot版本和Thymeleaf版本是否匹配
