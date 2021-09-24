@@ -207,6 +207,41 @@ private Date samplingTime;
 
 > Fastjson 1.1.26 版本存在Date类型转换的bug，避免使用该版本
 
+# 单元测试
+
+> 原文：[Spring Boot使用单元测试](https://blog.csdn.net/sz85850597/article/details/80427408)
+
+## 引入依赖
+
+```xml
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-test</artifactId>
+    <scope>test</scope>
+</dependency>
+```
+
+## Service单元测试
+
+Spring Boot中单元测试类写在 `src/test/java` 目录下，可以手动创建具体测试类，也可以通过IDEA自动创建测试类： `Ctrl` + `Shift` + `T`
+
+```java
+@RunWith(SpringRunner.class)
+@SpringBootTest
+public class LearnServiceTest {
+
+    @Resource
+    private LearnService learnService;
+
+    @Test
+    public void test(){
+        // Assert...
+    }
+}
+```
+
+上面就是最简单的单元测试写法，只需要添加类注解 `@RunWith(SpringRunner.class)` 和 `SpringBootTest` 即可
+
 # 打包部署
 
 ## 单模块项目打包
@@ -262,27 +297,6 @@ war包是JavaWeb程序打的包，war包里面包括写的代码编译成的clas
 ```
 
 参考：[SpringBoot+Maven多模块项目（创建、依赖、打包可执行jar包部署测试）完整流程](https://blog.csdn.net/baidu_41885330/article/details/81875395?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-2.control)
-
-# `@Autowired` 和 `@Resource` 的区别
-
-正常情况下我想大家应该只见过或者只使用过@Autowired注解，但是不知道大家有没有发现使用@Autowired注解总是会有警告提示，这对于强迫症的我来说非常难受，所以这才发现了能够替代@Autowired的注解@Resource，使用@Resource不会警告，那么他们两个到底有什么区别？
-
-`@Autowired` 注解跟Spring强耦合，如果换成JFinal等其他框架，功能就会失效
-`@Resource` 是JSR-250提供的，它是Java标准，绝大部分框架都支持
-
-`@Autowired` 只包含一个参数： `required` ，表示是否开启自动准入，默认是true
-`@Resource` 包含七个参数，其中最重要的两个参数是： `name` 和 `type` ，用来单独或同时指定需要自动装配的Bean的名称和类型
-
-`@Autowired` 默认按照byType自动装配，找不到匹配的Bean就会报错，找到多个匹配的Bean时需要 `@Qualifier` 或者 `@Primary` 配合使用
-`@Resource` 默认按照byName自动装配，找不到匹配的Bean时会按照type进行自动装配，如果按照type找不到或者找到多个匹配的Bean会直接报错
-
-`@Autowired` 如果要使用byName，需要使用@Qualifier或者@Primary一起配合，并且只能在byType找到多个同类型Bean的条件下执行，如果byType找不到至少一个类型匹配的Bean就会直接报错而不再通过byName的方式进行装配
-`@Resource` 如果指定了name，则按byName装配，找不到name匹配的就报错；如果指定了type，则按byType装配，找不到类型匹配的或者找到多个类型匹配的Bean也会直接报错；不配置时默认先byName后byType；如果同时指定了name和type则寻找name和type同时匹配的Bean进行装配
-
-`@Autowired` 能够用在：构造器、方法、参数、成员变量和注解上
-`@Resource` 能用在：类、成员变量和方法上
-
-详细参考：[@Autowired和@Resource的区别](https://www.zhihu.com/question/39356740)
 
 # 关于统一异常处理
 

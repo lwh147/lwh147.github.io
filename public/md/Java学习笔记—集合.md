@@ -1,4 +1,4 @@
-﻿# Java集合框架简单总结
+﻿# 继承关系
 
 下图对Java中常用的Map类型集合继承关系进行了展示：
 
@@ -62,3 +62,50 @@ Java的Map(映射)是一种把键对象和值对象进行映射的集合，其�
 **HashTable**：Hashtable继承Map接口，实现一个key-value映射的哈希表。**任何非空（non-null）的对象都可作为key或者value，并且他是线程安全的，所以在性能上略低于HashMap**。
 
 **LinkedHashMap**：LinkedHashMap继承于HashMap，**HashMap是无序的**，当我们希望有顺序地去存储key-value时，就需要使用LinkedHashMap了，他的存储顺序**默认为插入顺序**。LinkedHashMap其实就是可以看成HashMap的基础上，多了一个双向链表来维持顺序。他的静态内部类Entry相比HashMap多了before和after两个前后节点的指针属性，所以在插入数据时依然是按照HashMap的插入方法，并且数据的实际物理存储顺序也是随机的，但是插入时通过维护每个Entry的前后指针指向，我们就可以通过指针按照我们希望的顺序去迭代遍历数据。
+
+# 常见问题
+
+## `UnsupportedOperationException` 异常
+
+```java
+public class test {
+  public static void main(String[] args) {
+
+    String[] arr = new String[3];
+    arr[0] = "1";
+    arr[1] = "2";
+    arr[2] = "3";
+
+    // 调用Arrays中的asList方法将String[]转化为List<String>
+    List<String> list = Arrays.asList(arr);
+
+    System.out.println("list: " + list.toString());
+    // 为list添加一个元素，报错
+    list.add("f");
+    System.out.println("list: " + list.toString());
+    // 删除list中的一个元素，报错
+    list.remove(2);
+    System.out.println("list: " + list.toString());
+  }
+}
+```
+
+将 `String[]` 转化为 `List<String>` 的时候，是不能对转化出来的结果进行 `add` ， `remove` 操作的，因为它并不是我们熟悉的 `ArrayList` ，而是 `Arrays` 里面的**内部类**
+
+先来看看 `asList` 方法的源码：
+
+![asList](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917095516221-1859915796.png)
+
+再看看 `Arrays` 中的这个内部类： `ArrayList`
+
+![Arrays内部类ArrayList](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917094902498-499962382.png)
+
+可以看到这个 `ArrayList` 继承了 `AbstractList` 类，但是它并没有重写 `AbstractList` 的 `add` 和 `remove` 方法，以 `add` 为例，在调用时其实就是调用的 `AbstractList` 的 `add` 方法，下面再来看看 `AbstractList` 的 `add` 方法：
+
+![AbstractList的add方法](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917095823769-1086905442.png)
+
+解决办法：
+
+```java
+List<String> list = new ArrayList<String>(Arrays.asList(arr));
+```

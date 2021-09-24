@@ -59,22 +59,22 @@ participant t1 as 线程1（自增）
 participant t2 as 线程2（自减）
 participant i as 静态变量 i
 
-  activate t1
-  i ->> t1 : t1读取 i=0
-  t1 ->> t1 : 自增 i=0+1=1
-  t1 ->> t2 : t1时间片结束，上下文切换，执行t2
-  deactivate t1
-  activate t2
-  t1 --x i : 写入 i=1（未执行）
-  i ->> t2 : 读取 i=0
-  t2 ->> t2 : 自减 i=0-1=-1
-  t2 ->> i : 回写 i=-1
-  t2 ->> t1 : t2时间片结束，上下文切换，执行t1
-  deactivate t2
-  activate t1
-  t1 ->> i : 回写 i=1
-  t1 ->> t2 : t1时间片结束，上下文切换，执行t2
-  deactivate t1
+activate t1
+    i ->> t1 : t1读取 i=0
+    t1 ->> t1 : 自增 i=0+1=1
+    t1 ->> t2 : t1时间片结束，上下文切换，执行t2
+deactivate t1
+activate t2
+    t1 --x i : 写入 i=1（未执行）
+    i ->> t2 : 读取 i=0
+    t2 ->> t2 : 自减 i=0-1=-1
+    t2 ->> i : 回写 i=-1
+    t2 ->> t1 : t2时间片结束，上下文切换，执行t1
+deactivate t2
+activate t1
+    t1 ->> i : 回写 i=1
+    t1 ->> t2 : t1时间片结束，上下文切换，执行t2
+deactivate t1
 ```
 
 ## 临界区 Critical Section
@@ -162,43 +162,43 @@ participant t2 as 线程2（自减）
 participant i as 静态变量 i
 participant r as resource对象
 
-  activate t1
-  t1 ->> r : 执行到临界区代码，获取锁（加锁），没有其它锁，成功
-  activate r
-  i ->> t1 : t1读取 i=0
-  t1 ->> t1 : 自增 i=0+1=1
-  t1 ->> t2 : t1时间片结束，上下文切换，执行t2
-  deactivate t1
-  activate t2
-  t1 --x i : 写入 i=1（未执行）
-  t2 -x r : 获取锁（加锁），已经有t1加的锁，失败
-  t2 ->> t1 : 被阻塞，上下文切换，执行t1
-  deactivate t2
-  activate t1
-  t1 ->> i : 回写 i=1
-  t1 ->> r : 临界区代码执行结束，释放锁，唤醒因争夺锁被阻塞的t2
-  deactivate r
-  t1 ->> t2 : t1时间片结束，上下文切换，执行t2
-  deactivate t1
-  activate t2
-  t2 ->> r : 执行到临界区代码，获取锁（加锁），没有其它锁，成功
-  activate r
-  i ->> t2 : t2读取 i=1
-  t2 ->> t1 : t2时间片结束，上下文切换，执行t1
-  deactivate t2
-  activate t1
-  t2 --x t2 : 自减 i=0-1=-1（未执行）
-  t2 --x i : 回写 i=-1（未执行）
-  t1 -x r : 执行到临界区代码，获取锁（加锁），已经有t2加的锁，失败
-  t1 ->> t2 : t1被阻塞，上下文切换，执行t2
-  deactivate t1
-  activate t2
-  t2 ->> i : 自减 i=0-1=-1
-  t2 ->> i : 回写 i=-1
-  t2 ->> r : 临界区代码执行结束，释放锁，唤醒因争夺锁被阻塞的t1
-  deactivate r
-  t2 ->> t1 : t2时间片结束，上下文切换，执行t1
-  deactivate t2
+activate t1
+    t1 ->> r : 执行到临界区代码，获取锁（加锁），没有其它锁，成功
+    activate r
+        i ->> t1 : t1读取 i=0
+        t1 ->> t1 : 自增 i=0+1=1
+        t1 ->> t2 : t1时间片结束，上下文切换，执行t2
+deactivate t1
+activate t2
+        t1 --x i : 写入 i=1（未执行）
+        t2 -x r : 获取锁（加锁），已经有t1加的锁，失败
+        t2 ->> t1 : 被阻塞，上下文切换，执行t1
+deactivate t2
+activate t1
+        t1 ->> i : 回写 i=1
+        t1 ->> r : 临界区代码执行结束，释放锁，唤醒因争夺锁被阻塞的t2
+    deactivate r
+    t1 ->> t2 : t1时间片结束，上下文切换，执行t2
+deactivate t1
+activate t2
+    t2 ->> r : 执行到临界区代码，获取锁（加锁），没有其它锁，成功
+    activate r
+        i ->> t2 : t2读取 i=1
+        t2 ->> t1 : t2时间片结束，上下文切换，执行t1
+deactivate t2
+activate t1
+        t2 --x t2 : 自减 i=0-1=-1（未执行）
+        t2 --x i : 回写 i=-1（未执行）
+        t1 -x r : 执行到临界区代码，获取锁（加锁），已经有t2加的锁，失败
+        t1 ->> t2 : t1被阻塞，上下文切换，执行t2
+deactivate t1
+activate t2
+        t2 ->> i : 自减 i=0-1=-1
+        t2 ->> i : 回写 i=-1
+        t2 ->> r : 临界区代码执行结束，释放锁，唤醒因争夺锁被阻塞的t1
+    deactivate r
+    t2 ->> t1 : t2时间片结束，上下文切换，执行t1
+deactivate t2
 ```
 
 > 上面顺序图中的时间片结束时间点只是模拟了会产生竞态条件的一种情况，**真正运行过程中是不确定的，并且线程数量也不止两个**，但是可以肯定的是，不管时间片在当前线程执行到临界区内哪行代码时结束， `synchronized` 关键字都可以保证竞态条件不会发生，因为当前线程持有对象锁时，其它所有线程即使都能获取时间片开始执行，但在没有获得共享资源对象锁的条件下，临界区代码是不能执行的，只能阻塞等待，待持有锁的线程执行完临界区代码释放锁之后，下一个获得锁的线程才能继续执行临界区代码，这样就**保证了临界区代码的执行是原子性的**
