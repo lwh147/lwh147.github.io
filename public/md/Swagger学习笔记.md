@@ -4,7 +4,7 @@
 
 ## `@Api`
 
-**设置 tag 属性即可**，value 会被 tags 替代没卵用，tag 属性的内容会被显示到 Controller 类名前
+**设置 tags 属性即可**，value 会被 tags 替代没卵用，tags 属性的内容会被显示到 Controller 类名前
 
 ## `@ApiOperation`
 
