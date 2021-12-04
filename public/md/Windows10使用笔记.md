@@ -1,6 +1,89 @@
+# Windows 10 安装
+
+微软官方教程（制作U盘安装介质）：https://www.microsoft.com/zh-cn/software-download/windows10/
+
+可以自己搜索KMS工具进行破解，或者在淘宝上10块钱（左右）买个Key
+
 # 好用的软件推荐
 
+## 系统清理优化
 
+[Geek Uninstaller](https://geekuninstaller.com/)：极简的软件卸载工具（几MB的一个exe程序），支持卸载完成后清除注册表内容，也支持卸载 Windows Store Apps
+
+[Dism++](https://www.chuyu.me/zh-Hans/)：强大的 Windows
+系统优化工具，最好用的就是它把用户使用、调整频率较高的选项集合到了一起，让我们可以使用它快速地完成电脑的自定义设置和优化，而不需要一层层地打开在不同位置的设置选项（又是注册表又是组策略啊等）逐个调整，极大地方便了我们的操作（比如彻底禁用小娜、关闭Windows
+Defender、自定义右键菜单等等优化点）
+
+[Wise Registry Cleaner](https://www.wisecleaner.com.cn/wise-registry-cleaner.html)：注册表清理和整理软件
+
+## 系统防护
+
+[火绒安全](https://www.huorong.cn/)：界面简洁无广告，功能全面，安全工具中的垃圾清理、启动项管理和右键菜单管理功能非常不错，鉴于 Windows Defender 偶尔抽风狂占CPU但又不想裸奔，推荐使用火绒代之
+
+## 硬件相关
+
+[鲁大师](https://www.ludashi.com/)：娱乐大师，在硬件的检测和识别方面相比较其它软件还是不错的（甚至在缺少驱动程序的情况下也能准确识别硬件型号），在驱动管理方面，比驱动精灵、驱动人生什么的好，小白使用还是比较推荐的，最后没事也可以跑跑分娱乐娱乐
+
+[AIDA64](https://getintopc.com/softwares/aida64-engineer-extreme-6-10-5200-download/)：比较专业的硬件检测和评测工具，这里提供的下载链接国内访问速度较慢，需要科学上网
+
+[MSI Afterburner](https://cn.msi.com/Landing/afterburner/graphics-cards)：微星提供的免费显卡超频软件，除此之外还提供游戏内硬件信息监控和显示以及高质量视频录制等功能
+
+## 其它
+
+[GifCam](http://blog.bahraniapps.com/gifcam/#download)：简单小巧的GIF录制工具，国内访问较慢
+
+[draw.io](https://github.com/jgraph/drawio-desktop/releases/)：一款免费开源的绘图工具，拥有大量免费素材和模板，在免费程序里算是相当不错的，由于它本身就是个在线工具，所以也可以直接在线使用：https://www.draw.io/
+
+[v2rayN](https://github.com/2dust/v2rayN/releases)：科学上网工具软件，使用方法[在这里](https://www.sky350.com/374.html)，获取免费节点关键词【v2rayN免费节点每天更新】
+
+# 网站推荐
+
+## 软件下载
+
+[MSDN](https://msdn.itellyou.cn/)：提供系统镜像和各种办公、设计工具软件的下载
+
+[吾爱破解](https://www.52pojie.cn/)：顾名思义
+
+[Get Into PC](https://getintopc.com/)：与上面的一样，国内访问较慢
+
+## 壁纸下载
+
+[Wallhaven](https://wallhaven.cc/)：非常好的壁纸网站
+
+## 程序开发相关
+
+[Ubuntu Pastebin](https://paste.ubuntu.com/)：用于短期分享自己的代码或其它文本信息，带有代码高亮功能
+
+[阿里巴巴矢量图标库](https://www.iconfont.cn/search/index?q=corn&page=3)：国内功能很强大且图标内容很丰富的矢量图标库，提供矢量图标下载、在线存储、格式转换等功能，阿里巴巴体验团队倾力打造，设计和前端开发的便捷工具
+
+# 驱动管理
+
+## N/A驱动残留文件清理
+
+如果使用的是N卡，可以参考[这篇文章](https://www.chiphell.com/thread-1011795-1-1.html)对驱动残留文件进行清除，简单清理的话可以删除 `C:\Program Files\NVIDIA Corporation\Installer2`
+文件夹中的内容
+
+如果使用的是A卡，可以删除 `C:\AMD` 文件夹，这里存放的都是AMD软件的安装临时文件
+
+## 禁止Win10自动更新驱动
+
+在桌面的【此电脑】上【右键】点击【属性】，在打开的设置窗口中找到【高级系统设置】并打开
+
+![禁止自动更新驱动1](./temp/disable-driver-autoupdate1.png)
+
+搜索并打开【组策略】管理器
+
+![禁止自动更新驱动2](./temp/disable-driver-autoupdate2.png)
+
+## 手动更新驱动程序
+
+不需要下载各种软件，Win10提供了自动更新驱动程序的途径，搜索打开【设备管理器】，按如下步骤更新驱动程序
+
+![驱动更新](./temp/driver-update.png)
+
+# 更改用户名
+
+参考：[Win10如何更改C:\Users\下的用户名](https://blog.csdn.net/wls666/article/details/103334152?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-7.channel_param)
 
 # 通过修改hosts文件访问Github
 
@@ -74,8 +157,16 @@ pause > nul
 exit
 ```
 
-# 问题
+# 问题总结
 
 ## Win10任务栏BUG，鼠标悬停效果离开任务栏后依旧存在
 
 打开任务管理器，找到并选中【Windows资源管理器】，点击右下角重新启动
+
+## 删除文件时提示文件不存在
+
+参考：[电脑删除时提示文件不存在该怎么办？](https://www.jb51.net/diannaojichu/323838.html)
+
+## 桌面应用图标变白框
+
+参考：[win10软件应用白框图标处理, 恢复](https://blog.csdn.net/wh583114708/article/details/80677500?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param&depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-3.channel_param)

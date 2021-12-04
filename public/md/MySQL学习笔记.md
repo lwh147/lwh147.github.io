@@ -99,29 +99,44 @@ TIMESTAMP类型保存了从1970年1月1日午夜（格林尼治标准时间）�
 
 实际应用场景中，某些类型的数据并不是直接与内置类型一致，比如存储货币时使用整数就是一个例子
 
-另一个例子是存储IPv4地址，正常情况下我们会使用VARCHAR(15来存储IP地址)，然而，IP地址实际上是32位无符号整数，用点分十进制的表示方法只是为了让人们容易阅读，所以应该使用无符号整数存储IP地址，并且MySQL提供INET_ATON()和INET_NTOA()函数在这两种表示方法之间转换
+另一个例子是存储IPv4地址，正常情况下我们会使用VARCHAR(15来存储IP地址)
+，然而，IP地址实际上是32位无符号整数，用点分十进制的表示方法只是为了让人们容易阅读，所以应该使用无符号整数存储IP地址，并且MySQL提供INET_ATON()和INET_NTOA()函数在这两种表示方法之间转换
 
 # 多表查询
 
-## 内连接
+首先，我们得分清楚连接（JOIN）和联合（UNION），我阅读的大部分文章中将这两者的中文名互相混用，以至于我在写笔记的时候都搞不清楚该用哪个中文翻译，所以在进行下面的阅读前我觉得有必要说明一下，英文 `JOIN`
+的意思是加入、连接，所以 `JOIN` 叫做【连接查询】或【关联查询】，英文 `UNION` 的意思是联盟、联合，所以使用关键字 `UNION` 的叫做【联合查询】，除此之外，Sql语句有嵌套的情况叫做【嵌套查询】
+
+## 连接查询
+
+### 内连接
 
 内连接（INNER JOIN） 简单理解就是对两个表求某种条件下的交集
 
-需要解释的地方是**ON 关键字后的 JOIN 条件和 WHERE 关键字之后的筛选条件的执行计划是一样的**，并且 WHERE 后的条件在实际执行中也会被转化为 ON 的写法，也就是最终都是在关联的时候根据条件对数据进行过滤，而不是在关联后所有结果集都出来了再通过 WHERE 来筛选
+需要解释的地方是**ON 关键字后的 JOIN 条件和 WHERE 关键字之后的筛选条件的执行计划是一样的**，并且 WHERE 后的条件在实际执行中也会被转化为 ON
+的写法，也就是最终都是在关联的时候根据条件对数据进行过滤，而不是在关联后所有结果集都出来了再通过 WHERE 来筛选
 
 个人推荐在编写 INNER JOIN 类型的查询Sql时，必须的字段可以写到 ON 条件之后，非必须的字段可以放到 WHERE 关键字之后使用动态Sql生成，这样逻辑上更加清晰一点
 
 > Mysql中只使用关键字 JOIN 的默认行为是内连接 INNER JOIN
 
-## 左连接
+### 左连接
 
 左连接（LEFT JOIN）和 INNER JOIN 不同，LEFT JOIN 准确来说应该是左外连接（LEFT OUTER JOIN），连接时即使右表中没有与左表对应的记录时也会保留左表的记录
 
 需要注意的是 **LEFT JOIN 中的 ON 和 WHERE 条件的执行计划就不同了，ON 条件会在关联的时候执行，而 WHERE 条件会在关联后所有结果集都出来的情况下执行**
 
+## 联合查询
+
+联合查询（UNION）是用来合并两个或多个 SELECT 语句的结果集，并消去表中任何重复行，目前使用并不多，所以与关联查询进行区分即可
+
+## 嵌套查询
+
+顾名思义，不做过多解释
+
 ## 分步查询
 
-任何联合查询都可以分解成多个单表查询分步执行
+任何多表查询（包括连接和联合以及嵌套查询）都可以分解成多个单表查询分步执行
 
 举个例子，如果要查询多个指定分类的帖子，需要将类型表和帖子信息表（分两个表的情况下）进行连接，连接条件是类型id相等且是指定类型，这时候我们可以将其分解为两个查询，首先在类型表中查询指定类型的主键集合，然后遍历集合根据每个类型的主键去帖子表中再查询该类型下的帖子集合
 
@@ -195,7 +210,7 @@ SELECT * FROM user INNER JOIN (
 
 首先，优化后的关联查询中的子查询只查询id，如果这个表的列非常多，那么只查询id相比查询 * 时的数据量已经减少了许多
 
-其次，子查询使用了覆盖索引，所谓覆盖索引就是需要查询的列与索引列完全匹配，索引本身就存储了需要的查询的列的数据，避免了回表操作，相当于避免了m次（偏移量）的简单主键查询操作，当偏移量非常大时的性能提升可见一斑
+其次，子查询使用了覆盖索引，所谓覆盖索引就是需要查询的列与索引列完全匹配，索引本身就存储了需要查询的列数据，避免了回表操作，相当于避免了m次（偏移量）的简单主键查询操作，当偏移量非常大时的性能提升可见一斑
 
 > 回表是指当查询的列和索引列不完全匹配时，需要根据索引中的数据指针回到数据表中查询不匹配列数据的操作
 
@@ -284,7 +299,8 @@ B+Tree索引适用于**全键值**、**键值范围**或**键前缀**查找，�
 
 ### 哈希索引
 
-我们都知道哈希表在查询速度上的表现是无可匹敌的，所以哈希索引（Hash index）也是另一种常见的索引实现方式，只有精确匹配所有列的查询才有效。对于每一行数据，存储引擎都会对所有的索引列计算一个哈希码（Hash code），哈希码是一个较小的值，并且不同键值的行计算出来的哈希码也不一样。哈希索引将所有的哈希码存储在索引中，同时在哈希表中保存只想每个数据行的指针
+我们都知道哈希表在查询速度上的表现是无可匹敌的，所以哈希索引（Hash index）也是另一种常见的索引实现方式，只有精确匹配所有列的查询才有效。对于每一行数据，存储引擎都会对所有的索引列计算一个哈希码（Hash
+code），哈希码是一个较小的值，并且不同键值的行计算出来的哈希码也不一样。哈希索引将所有的哈希码存储在索引中，同时在哈希表中保存指向数据行的指针
 
 然而，哈希索引也有它的限制：
 
@@ -357,24 +373,65 @@ WHERE
 对于那些选择性非常低的列，可以增加一些特殊的索引来做排序。例如，可以创建（sex，rating）索引用于下面的查询：
 
 ```sql
-SELECT<cols> FROM profiles WHERE sex='M' ORDER BY rating LIMIT 10
+SELECT<cols>
+FROM PROFILES
+WHERE sex='M'
+ORDER BY rating
+LIMIT 10
 ```
 
 这个查询同时使用了ORDER BY和LIMIT，如果没有索引的话会很慢。
 
+# EXPLAIN
+
+> 参考：[Mysql官方文档](https://dev.mysql.com/doc/refman/8.0/en/explain-output.html)
+
+简单记录一下MySql内置的sql分析命令 `EXPLAIN` 执行结果的参数意义， `EXPLAIN` 的执行结果如下：
+
+![explain执行结果](./temp/mysql-explain.png)
+
+参数名|参数意义|取值说明
+-----|-----|-----
+`id` |子查询的执行顺序| `id` 相同时由上至下执行； `id` 不同时 `id` 值越大优先级越高越先被执行
+`select_type` |查询的类型，用于区分简单查询、联合查询和嵌套查询| `SIMPLE` ：简单查询<br/> `PRIMARY` ：嵌套查询中最外层的查询<br/> `SUBQUERY` ：子查询（ `SELECT` 后或 `WHERE` 后）<br/> `DERIVED` ： 子查询（ `FROM` 后）<br/> `UNION` ：子查询（ `UNION` 后）<br/> `UNION RESULT` ： `UNION` 执行结果
+`table` |该行的查询是关于哪张表的|表名（有别名时会显示别名）
+`type` |查询类型，从最好到最差依次是： `system` > `const` > `eq_ref` > `ref` > `range` > `index` > `ALL` ，一般情况下至少得保证达到 `range` 级别，最好 `ref` | `system` ：表只有一行记录，基本不会出现，可以忽略<br/> `const` ：查询使用了【主键】或【唯一索引】且条件为固定值（=）<br/> `ref` ：查询使用了普通索引且条件为固定值（=）<br/> `eq_ref` ：使用主键或唯一索引作为连接条件的连接查询（=）<br/> `range` ：查询使用了普通索引且条件为范围<br/> `index` ：遍历索引树，通常比 `ALL` 快，因为索引文件通常比数据文件小<br/> `ALL` ：全表扫描
+`possible_keys` |可能使用到的索引|一个或多个，执行时不一定会被用到
+`key` |实际使用的索引|出现 `possible_keys` 列有值而 `key` 列为 `null` 的情况表示实际没用索引
+`key_len` |索引字段的最大可能长度|一般情况下越短越好
+`ref` |显示索引的哪些列被使用|多个表的情况下会显示表前缀，一个表的简单查询情况下只会显示一个或多个const
+`rows` |conte|conte
+`filtered` |conte|conte
+`Extra` |conte|conte
+
 # 常见问题
 
-如果 表名 或 字段名 为 mysql 关键词，需要**加反引号**，否则会报错，例如： `order` ， `user`
+如果 表名 或 字段名 为 mysql 关键词（尽量避免），需要**加反引号**，否则会报错，例如： `order` ， `user`
 
 ```sql
-SELECT * from `order`
-SELECT * from `user`
+SELECT *
+FROM `order`
+SELECT *
+FROM `user`
 ```
 
-数据库连接url的 `zeroDateTimeBehavior=convertToNull` 参数代表接受的时间格式错误时把错误的日期转换为 `null` ，避免了 `java.sql. SQLException: Cannot convert value '0000-00-00 00:00:00' from column XX to TIMESTAMP` 异常，例：
+数据库连接url的 `zeroDateTimeBehavior=convertToNull` 参数代表接受的时间格式错误时把错误的日期转换为 `null`
+，避免了 `java.sql. SQLException: Cannot convert value '0000-00-00 00:00:00' from column XX to TIMESTAMP` 异常，例：
 
 ```text
 spring.datasource.url=jdbc:mysql://localhost:3306/bingo?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
 ```
 
-开发和测试环境下的数据库连接url后可加上参数 `useSSL=false` 避免程序发出 `Establishing SSL connection without server's identity verification is not recommended.` 警告，但是生产环境下必须使用SSL安全连接
+开发和测试环境下的数据库连接url后可加上参数 `useSSL=false`
+避免程序发出 `Establishing SSL connection without server's identity verification is not recommended.` 警告，但是生产环境下必须使用SSL安全连接
+
+强制结束查询
+
+```text
+# 进入命令行
+mysql -u root -p
+# 查看当前正在执行的查询
+show processlist;
+# 根据查询ID强制停止查询
+kill [ID];
+```
