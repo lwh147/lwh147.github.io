@@ -261,7 +261,7 @@ private Date samplingTime;
 
 > Fastjson 1.1.26 版本存在Date类型转换的bug，避免使用该版本
 
-> 最好在数据库连接后加上参数 `serverTimezone=Asia/Shanghai` 也指定数据库使用的时区，或者根据你所在地区统一指定为其它时区
+> 最好在数据库连接后加上参数 `serverTimezone=GMT+8` 指定数据库使用的时区，或者根据你所在地区统一指定为其它时区
 
 # 单元测试
 
