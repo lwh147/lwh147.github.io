@@ -77,3 +77,26 @@
 > 在 IDEA 的 `Project Structure...` 选项中对项目的 JDK 版本和编码进行修改只是暂时在 IDEA 的项目设置文件中进行了修改，并不会对 POM 文件进行修改，更不会影响 Maven 编译打包时实际的 JDK 版本和编码，重新打开项目又会变成默认的
 
 # 常见问题
+
+## IDEA中Maven依赖莫名报错或找不到
+
+有时候有些依赖你确定已经导入了但是会报错找不到，此时先关闭所有IDEA窗口重启IDEA，重新打开项目，检查问题是否解决，如果没解决，根据错误信息排查错误
+
+如果修改过后或确定配置没问题但还是有错，执行IDEA的删除缓存操作： `File` ➡ `Invalidate Caches / Restart...`
+
+如果都不行，换个Maven版本试试
+
+## IDEA中更改 `settings.xml` 文件不生效
+
+在 `settings.xml` 中配置了自定义Maven仓库信息，也在IDEA中指定使用上述Maven配置文件，但是刷新重载之后不自动下载新增依赖，提示 `Could not find xxx in 你配置的Maven仓库` 或者 `Could not find xxx in Maven中央仓库` 或者 `Could not find xxx in 你其他配置文件中的仓库地址` 又或者只有 `Could not find xxx`
+
+* 如果你只有一个配置文件，注释掉或删除 `settings.xml` 文件中其它Maven仓库的配置
+* 如果你针对不同的Maven仓库有不同的配置文件，即有多个配置文件的情况下，不要使用 `settings.xml` 作为配置文件名，删除Maven默认的 `settings.xml` 配置文件或将其更名为 `settings-default.xml` 或其它名称，然后为当前项目指定其配置文件
+
+进行完上述步骤之后，在本地Maven仓库中找到错误中找不到的xxx.jar包目录，将其删除，最后执行Maven刷新操作重载依赖
+
+> 诚然，删除整个本地仓库也是相同的效果，但是并不推荐，除非出现了大量jar包错误，即使这种情况也不必清空整个本地Maven仓库，只需要删除出错jar包目录即可，并不需要删除全部，当然如果你想清理一下本地Maven仓库重新下载也是可以的
+
+如果还是不行，执行IDEA的删除缓存操作： `File` ➡ `Invalidate Caches / Restart...`
+
+如果都不行，换个Maven版本试试
