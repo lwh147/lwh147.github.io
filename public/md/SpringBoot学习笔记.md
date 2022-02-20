@@ -1,3 +1,11 @@
+# 配置文件加载顺序
+
+SpringBoot 配置文件默认为 `application.*` 和 `application-default.*` ，如果通过 `spring.config.name` 属性指定了自定义配置文件名则加载读取指定的配置文件
+
+配置文件的扩展名有四个： `*.properties` 、 `*.xml` 、 `*.yml` 、 `*.yaml` ；同名但不同类型的配置文件加载顺序为: `*.propertie` → `*.xml` → `*.yml` → `*.yaml`
+
+
+
 # 扫描包路径的配置
 
 SpringBoot 默认的扫描基础包路径是**启动类所在包及其子包**，但是实际开发过程中，各个项目现在基本都采用 maven 多模块的形式，并且还需要引入一些公司自己的基础依赖框架，这可能就会出现部分打了注解需要被 Spring
@@ -27,8 +35,7 @@ SpringBoot 默认的扫描基础包路径是**启动类所在包及其子包**�
 
 ### Java基础包装类型
 
-对于类型是**Java基础包装类型**（Integer、String、Long等）的控制器参数，默认会将控制器参数名称作为 `key` 去 `map` 中查找，如果找到了，会将 `value`
-强制转换为控制器参数对应的类型，转换成功则绑定成功，转换失败则报类型转换异常；如果没有找到则不会绑定，也不会报错，只是在控制器中对应的参数值为 `null`
+对于类型是**Java基础包装类型**（Integer、String、Long等）的控制器参数，默认会将控制器参数名称作为 `key` 去 `map` 中查找，如果找到了，会将 `value` 强制转换为控制器参数对应的类型，转换成功则绑定成功，转换失败则报类型转换异常；如果没有找到则不会绑定，也不会报错，只是在控制器中对应的参数值为 `null`
 
 ### Java原始数据类型
 
@@ -36,12 +43,13 @@ SpringBoot 默认的扫描基础包路径是**启动类所在包及其子包**�
 
 ### 自定义Java Bean
 
-对于类型是**自定义Java Bean**的控制器参数，框架会将请求参数与控制器参数对象的属性进行绑定，就是依次将控制器参数的属性名作为 `key` 去 `map`
-中查找，将匹配的参数值绑定到该对象的属性值上，相当于把这个对象的所有属性写在了控制器参数列表上
+对于类型是**自定义Java Bean**的控制器参数，框架会将请求参数与控制器参数对象的属性进行绑定，就是依次将控制器参数的属性名作为 `key` 去 `map` 中查找，将匹配的参数值绑定到该对象的属性值上，相当于把这个对象的所有属性写在了控制器参数列表上
 
 对于类型是其他Java内置对象类型（Map、List等）的控制器参数，框架会按照Java Bean绑定规则进行处理，此时没有任何意义，不推荐使用也不会使用这种方式
 
-> 特别的，对于请求参数中有多个同名参数的情况，框架只会尝试将找到的第一个名称匹配的请求参数与控制器参数进行绑定，如果类型不匹配则会报错而不会继续查找下一个名称匹配的参数
+> 如果需要使用Map接收请求参数，则Map的value泛型必须指定为Object（不是String）且必须添加注解 `@RequestParam`
+
+> 对于请求参数中有多个同名参数的情况，框架只会尝试将找到的第一个名称匹配的请求参数与控制器参数进行绑定，如果类型不匹配则会报错而不会继续查找下一个名称匹配的参数
 
 > 如果想要得到所有同名参数的值，只能使用数组类型（[]）的参数进行绑定（List等集合类型不行），例如请求参数为： `name = 1，name = 2` ，那么对应的控制器参数类型应该为 `String[] name` 或 `int[] name` ，需要注意的是所有同名请求参数的参数值都必须能转换为数组的元素类型才能绑定成功，如果将上例中第二个name参数值改为 `l2ajj` ，此时控制器参数类型声明如果使用 `int[] name` 就会报错，因为字符串 `12ajj` 不能转换为整型，此时只能使用 `String[] name` 接收参数
 
@@ -72,8 +80,7 @@ public @interface RequestParam {
 
 `required` 和 `defaultValue` 字段的作用比较容易理解，这里不再过多赘述
 
-在指定了 `name` 或 `value` （他俩的作用是一样的）后，框架不会对控制器参数的类型进行判断，而是简单的先根据指定名称去 `map`
-中找需要的请求参数，找到了就直接强制转换为控制器参数类型，转换失败则报错，如果没找到也报错（注解的必须属性默认为 `true` ，可指定为 `false` ），不会出现将请求参数值绑定到控制器参数对象属性中的情况
+在指定了 `name` 或 `value` （他俩的作用是一样的）后，框架不会对控制器参数的类型进行判断，而是简单的先根据指定名称去 `map` 中找需要的请求参数，找到了就直接强制转换为控制器参数类型，转换失败则报错，如果没找到也报错（注解的必须属性默认为 `true` ，可指定为 `false` ），不会出现将请求参数值绑定到控制器参数对象属性中的情况
 
 ## `@RequestBody` 注解
 
@@ -214,18 +221,16 @@ private Date modifyDate;
 **以上两种方式是可以互相搭配使用的**，也就是说它们两者并不是互斥的配置
 
 在实际操作的时候，**基于yml文件的配置优先级低于基于属性注解的配置**，所以在yml中配置日期时间格式为 `yyyy-MM-dd HH:mm:ss`
-时，如果某个Bean的属性上也存在注解 `@JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")` ，那么最终该属性会以注解的格式 `yyyy/MM/dd HH:mm:ss`
-进行序列化和反序列化，但是对于没有被注解的属性，则会按照yml中配置的格式 `yyyy-MM-dd HH:mm:ss` 进行序列化和反序列化
 
-综上，当POJO类对象被作为接受请求参数的控制器参数时， `@DateTimeFormat` 有效，请求参数中的时间必须为该注解配置的 `pattern` 格式；而当POJO类对象被作为接受请求体的控制器参数时， `@JsonFormat`
-注解有效；当POJO类对象被作为响应体数据时也是 `@JsonFormat` 注解生效
+时，如果某个Bean的属性上也存在注解 `@JsonFormat(pattern = "yyyy/MM/dd HH:mm:ss")` ，那么最终该属性会以注解的格式 `yyyy/MM/dd HH:mm:ss` 进行序列化和反序列化，但是对于没有被注解的属性，则会按照yml中配置的格式 `yyyy-MM-dd HH:mm:ss` 进行序列化和反序列化
+
+综上，当POJO类对象被作为接受请求参数的控制器参数时， `@DateTimeFormat` 有效，请求参数中的时间必须为该注解配置的 `pattern` 格式；而当POJO类对象被作为接受请求体的控制器参数时， `@JsonFormat` 注解有效；当POJO类对象被作为响应体数据时也是 `@JsonFormat` 注解生效
 
 > SpringBoot默认交互数据格式为JSON，并且默认采用Jackson作为序列化和反序列化工具，所以如果请求体或响应体不是JSON格式或者JSON工具类不采用Jackson时该注解无效
 
-此外，针对第一种配置方式，由于在配置其它序列策略时（如配置Long序列化为String）需要对类 `WebMvcConfigurationSupport` （继承并重写，已废弃）或 接口 `WebMvcConfigurer`
-（实现接口，推荐）中的 `extendMessageConverters` 方法进行重写或添加自定义实现，会覆盖 `@EnableAutoConfiguration` 关于 `WebMvcAutoConfiguration`
-的配置，yml配置文件中关于Jackson的时间格式化配置将会失效，所以在使用第一种方式时需要注意项目是否还通过以上方式进行了其它序列化方式的配置，如果有那么推荐统一在 `extendMessageConverters`
-方法中通过代码进行配置
+此外，针对第一种配置方式，由于在配置其它序列策略时（如配置Long序列化为String）需要对类 `WebMvcConfigurationSupport` （继承并重写，已废弃）或 接口 `WebMvcConfigurer` （实现接口，推荐）中的 `extendMessageConverters` 方法进行重写或添加自定义实现，会覆盖 `@EnableAutoConfiguration` 关于 `WebMvcAutoConfiguration`
+
+的配置，yml配置文件中关于Jackson的时间格式化配置将会失效，所以在使用第一种方式时需要注意项目是否还通过以上方式进行了其它序列化方式的配置，如果有那么推荐统一在 `extendMessageConverters` 方法中通过代码进行配置
 
 ### 使用Fastjson
 
@@ -270,7 +275,6 @@ private Date samplingTime;
 ## 引入依赖
 
 ```xml
-
 <dependency>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-test</artifactId>
