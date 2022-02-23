@@ -523,6 +523,10 @@ grep -n 2013013[0-9][0-9][13579] xg13x.txt
 cat text.txt | grep keyword
 ```
 
+## zgrep
+
+查看.tar.gz文件内容（不需要解压），看日志神器
+
 ## find
 
 在目录中搜索文件
@@ -810,6 +814,10 @@ cat he*
 # 在屏幕上显示后缀名为.sh的文件的内容
 cat *.sh
 ```
+
+## zcat
+
+查看.tar.gz文件内容（不需要解压），看日志神器
 
 ## more
 

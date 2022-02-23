@@ -1,10 +1,10 @@
 # 配置文件加载顺序
 
-SpringBoot 配置文件默认为 `application.*` 和 `application-default.*` ，如果通过 `spring.config.name` 属性指定了自定义配置文件名则加载读取指定的配置文件
+SpringBoot 配置文件默认为 `application.*` 和 `application-default.*` ，如果通过 `spring.config.name` 属性指定了自定义配置文件名则加载读取指定的配置文件，也可以通过 `spring.profiles.active` 指定启用某个特定的配置文件
 
 配置文件的扩展名有四个： `*.properties` 、 `*.xml` 、 `*.yml` 、 `*.yaml` ；同名但不同类型的配置文件加载顺序为: `*.propertie` → `*.xml` → `*.yml` → `*.yaml`
 
-
+> `bootstrap.*` 配置文件需要引入SpringCloud上下文依赖才会生效，并且加载顺序在 `application*.*` 之前
 
 # 扫描包路径的配置
 
