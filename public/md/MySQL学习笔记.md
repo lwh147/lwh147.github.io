@@ -104,8 +104,7 @@ TIMESTAMP类型保存了从1970年1月1日午夜（格林尼治标准时间）�
 
 # 多表查询
 
-首先，我们得分清楚连接（JOIN）和联合（UNION），我阅读的大部分文章中将这两者的中文名互相混用，以至于我在写笔记的时候都搞不清楚该用哪个中文翻译，所以在进行下面的阅读前我觉得有必要说明一下，英文 `JOIN`
-的意思是加入、连接，所以 `JOIN` 叫做【连接查询】或【关联查询】，英文 `UNION` 的意思是联盟、联合，所以使用关键字 `UNION` 的叫做【联合查询】，除此之外，Sql语句有嵌套的情况叫做【嵌套查询】
+首先，我们得分清楚连接（JOIN）和联合（UNION），我阅读的大部分文章中将这两者的中文名互相混用，以至于我在写笔记的时候都搞不清楚该用哪个中文翻译，所以在进行下面的阅读前我觉得有必要说明一下，英文 `JOIN` 的意思是加入、连接，所以 `JOIN` 叫做【连接查询】或【关联查询】，英文 `UNION` 的意思是联盟、联合，所以使用关键字 `UNION` 的叫做【联合查询】，除此之外，Sql语句有嵌套的情况叫做【嵌套查询】
 
 ## 连接查询
 
@@ -388,7 +387,7 @@ LIMIT 10
 
 简单记录一下MySql内置的sql分析命令 `EXPLAIN` 执行结果的参数意义， `EXPLAIN` 的执行结果如下：
 
-![explain执行结果](./temp/mysql-explain.png)
+![explain执行结果](https://img2022.cnblogs.com/blog/2330281/202202/2330281-20220224230706242-1953227398.png)
 
 参数名|参数意义|取值说明
 -----|-----|-----
@@ -415,15 +414,13 @@ SELECT *
 FROM `user`
 ```
 
-数据库连接url的 `zeroDateTimeBehavior=convertToNull` 参数代表接受的时间格式错误时把错误的日期转换为 `null`
-，避免了 `java.sql. SQLException: Cannot convert value '0000-00-00 00:00:00' from column XX to TIMESTAMP` 异常，例：
+数据库连接url的 `zeroDateTimeBehavior=convertToNull` 参数代表接受的时间格式错误时把错误的日期转换为 `null` ，避免了 `java.sql. SQLException: Cannot convert value '0000-00-00 00:00:00' from column XX to TIMESTAMP` 异常，例：
 
 ```text
 spring.datasource.url=jdbc:mysql://localhost:3306/bingo?characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull
 ```
 
-开发和测试环境下的数据库连接url后可加上参数 `useSSL=false`
-避免程序发出 `Establishing SSL connection without server's identity verification is not recommended.` 警告，但是生产环境下必须使用SSL安全连接
+开发和测试环境下的数据库连接url后可加上参数 `useSSL=false` 避免程序发出 `Establishing SSL connection without server's identity verification is not recommended.` 警告，但是生产环境下必须使用SSL安全连接
 
 强制结束查询
 

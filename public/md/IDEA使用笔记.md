@@ -8,8 +8,7 @@
 
 方法1： `resources` 文件夹上右键，选择 `Mark Directory As... -> Resources Root` 标记为资源根目录即可
 
-方法2：打开 `Project Structure...` 选择 `Modules` ，选中对应maven模块的spring选项，在右边上方一排工具栏中找到绿色树叶按钮 `Customize Spring Boot...`
-，点击后在弹出框中点击【加号】选中未被识别的配置文件，点击 `ok` 然后 `apply` 即可
+方法2：打开 `Project Structure...` 选择 `Modules` ，选中对应maven模块的spring选项，在右边上方一排工具栏中找到绿色树叶按钮 `Customize Spring Boot...` ，点击后在弹出框中点击【加号】选中未被识别的配置文件，点击 `ok` 然后 `apply` 即可
 
 方法3：以上两种方法都不起作用时，检查你的SpringBoot启动类类名是否匹配 `xxxApplication` 的命名规则（必须以Application结尾才能被IDEA自动识别）
 

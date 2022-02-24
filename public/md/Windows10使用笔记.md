@@ -24,7 +24,7 @@ Defender、自定义右键菜单等等优化点）
 
 [鲁大师](https://www.ludashi.com/)：娱乐大师，在硬件的检测和识别方面相比较其它软件还是不错的（甚至在缺少驱动程序的情况下也能准确识别硬件型号），在驱动管理方面，比驱动精灵、驱动人生什么的好，小白使用还是比较推荐的，最后没事也可以跑跑分娱乐娱乐
 
-[AIDA64](https://getintopc.com/softwares/aida64-engineer-extreme-6-10-5200-download/)：比较专业的硬件检测和评测工具，这里提供的下载链接国内访问速度较慢，需要科学上网
+[AIDA64](https://getintopc.com/softwares/aida64-engineer-extreme-6-10-5200-download/)：比较专业的硬件检测和评测工具，这里提供的下载链接国内访问速度较慢，需要梯子
 
 [MSI Afterburner](https://cn.msi.com/Landing/afterburner/graphics-cards)：微星提供的免费显卡超频软件，除此之外还提供游戏内硬件信息监控和显示以及高质量视频录制等功能
 
@@ -34,7 +34,9 @@ Defender、自定义右键菜单等等优化点）
 
 [draw.io](https://github.com/jgraph/drawio-desktop/releases/)：一款免费开源的绘图工具，拥有大量免费素材和模板，在免费程序里算是相当不错的，由于它本身就是个在线工具，所以也可以直接在线使用：https://www.draw.io/
 
-[v2rayN](https://github.com/2dust/v2rayN/releases)：科学上网工具软件，使用方法[在这里](https://www.sky350.com/374.html)，获取免费节点关键词【v2rayN免费节点每天更新】
+[v2rayN](https://github.com/2dust/v2rayN/releases)：梯子，使用方法[在这里](https://www.sky350.com/374.html)，获取免费节点关键词【v2rayN免费节点每天更新】
+
+[DevToys](https://www.microsoft.com/zh-hk/p/devtoys/9pgcv4v3bk4w?activetab=pivot:overviewtab)：是一个适用于开发人员的工具箱, 可以用它处理与开发相关的一些任务比如 格式化 JSON、JWT 解码、图片压缩、字符串处理， 哈希生成器等等
 
 # 网站推荐
 
@@ -45,6 +47,8 @@ Defender、自定义右键菜单等等优化点）
 [吾爱破解](https://www.52pojie.cn/)：顾名思义
 
 [Get Into PC](https://getintopc.com/)：与上面的一样，国内访问较慢
+
+[LDTools](https://ldtstore.com.cn/ldtools/)：本文提到的大部分工具软件都可以在这里找到并下载，整合了许多工具软件的下载地址
 
 ## 壁纸下载
 
@@ -60,8 +64,7 @@ Defender、自定义右键菜单等等优化点）
 
 ## N/A驱动残留文件清理
 
-如果使用的是N卡，可以参考[这篇文章](https://www.chiphell.com/thread-1011795-1-1.html)对驱动残留文件进行清除，简单清理的话可以删除 `C:\Program Files\NVIDIA Corporation\Installer2`
-文件夹中的内容
+如果使用的是N卡，可以参考[这篇文章](https://www.chiphell.com/thread-1011795-1-1.html)对驱动残留文件进行清除，简单清理的话可以删除 `C:\Program Files\NVIDIA Corporation\Installer2` 文件夹中的内容
 
 如果使用的是A卡，可以删除 `C:\AMD` 文件夹，这里存放的都是AMD软件的安装临时文件
 
@@ -69,17 +72,17 @@ Defender、自定义右键菜单等等优化点）
 
 在桌面的【此电脑】上【右键】点击【属性】，在打开的设置窗口中找到【高级系统设置】并打开
 
-![禁止自动更新驱动1](./temp/disable-driver-autoupdate1.png)
+![禁止自动更新驱动1](https://img2022.cnblogs.com/blog/2330281/202202/2330281-20220224230504495-264762734.png)
 
 搜索并打开【组策略】管理器
 
-![禁止自动更新驱动2](./temp/disable-driver-autoupdate2.png)
+![禁止自动更新驱动2](https://img2022.cnblogs.com/blog/2330281/202202/2330281-20220224230513530-1494871479.png)
 
 ## 手动更新驱动程序
 
 不需要下载各种软件，Win10提供了自动更新驱动程序的途径，搜索打开【设备管理器】，按如下步骤更新驱动程序
 
-![驱动更新](./temp/driver-update.png)
+![驱动更新](https://img2022.cnblogs.com/blog/2330281/202202/2330281-20220224230652486-515173847.png)
 
 # 更改用户名
 
