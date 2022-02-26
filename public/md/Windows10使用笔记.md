@@ -10,9 +10,7 @@
 
 [Geek Uninstaller](https://geekuninstaller.com/)：极简的软件卸载工具（几MB的一个exe程序），支持卸载完成后清除注册表内容，也支持卸载 Windows Store Apps
 
-[Dism++](https://www.chuyu.me/zh-Hans/)：强大的 Windows
-系统优化工具，最好用的就是它把用户使用、调整频率较高的选项集合到了一起，让我们可以使用它快速地完成电脑的自定义设置和优化，而不需要一层层地打开在不同位置的设置选项（又是注册表又是组策略啊等）逐个调整，极大地方便了我们的操作（比如彻底禁用小娜、关闭Windows
-Defender、自定义右键菜单等等优化点）
+[Dism++](https://www.chuyu.me/zh-Hans/)：强大的 Windows 系统优化工具，最好用的就是它把用户使用、调整频率较高的选项集合到了一起，让我们可以使用它快速地完成电脑的自定义设置和优化，而不需要一层层地打开在不同位置的设置选项（又是注册表又是组策略啊等）逐个调整，极大地方便了我们的操作（比如彻底禁用小娜、关闭 Windows Defender、自定义右键菜单等等优化点）
 
 [Wise Registry Cleaner](https://www.wisecleaner.com.cn/wise-registry-cleaner.html)：注册表清理和整理软件
 
