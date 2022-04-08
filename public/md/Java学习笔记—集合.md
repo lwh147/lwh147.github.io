@@ -63,6 +63,40 @@ Java的Map(映射)是一种把键对象和值对象进行映射的集合，其�
 
 **LinkedHashMap**：LinkedHashMap继承于HashMap，**HashMap是无序的**，当我们希望有顺序地去存储key-value时，就需要使用LinkedHashMap了，他的存储顺序**默认为插入顺序**。LinkedHashMap其实就是可以看成HashMap的基础上，多了一个双向链表来维持顺序。他的静态内部类Entry相比HashMap多了before和after两个前后节点的指针属性，所以在插入数据时依然是按照HashMap的插入方法，并且数据的实际物理存储顺序也是随机的，但是插入时通过维护每个Entry的前后指针指向，我们就可以通过指针按照我们希望的顺序去迭代遍历数据。
 
+下面就来看看 `Hashtable` 是怎么使用除留余数法的
+
+```java
+// 摘自Hashtable源码，jdk1.8
+public synchronized V get(Object key) {
+    Entry<?,?> tab[] = table;
+    // 调用key的hashcode()方法获取关键码hash
+    int hash = key.hashCode();
+    // 这里对关键码hash进行了一次运算，我们先不管，很明显这就是除留余数法
+    int index = (hash & 0x7FFFFFFF) % tab.length;
+    
+    ...
+}
+```
+
+现在来看看为什么需要 `(hash & 0x7FFFFFFF)`
+
+首先，我们都知道作为key的类必须重写 `Object` 类的 `hashCode()` 方法（和 `Object.equals()` 方法，原因自行了解），而这个方法的返回值类型为 `int` ，所以 `hash` 类型为 `int` ，所以 `hash` 有可能为负数
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        // -1
+        System.out.println(new Integer(-1).hashCode());
+    }
+}
+```
+
+如果 `hash` 作为负数直接和 `tab.length` 取余，那结果也会是负数，而数组下标不可能为负数，所以 `(hash & 0x7FFFFFFF)` 就是为了将 `hash` 变为正整数，那么问题又来了，这个运算是怎么将 `hash` 变为正整数的呢？
+
+在Java中整型转换为二进制后首位便是符号位（采用补码表示） ，符号位为 `0` 表示正数，为 `1` 表示负数， `&` 运算符是按位与，将16进制数 `0x7FFFFFFF` 转换为二进制为 `0111 1111 1111 1111 1111 1111 1111 1111` ，所以 `(hash & 0x7FFFFFFF)` 运算就是将 `hash` 的二进制最高位和 `0` 进行与运算（其它位都是 `1` ，结果取决于hash对应位置的值，没有变化），结果永远为 `0` ，符号位变为 `0` 那自然就成为正整数了
+
+
+
 # 常见问题
 
 ## `UnsupportedOperationException` 异常
