@@ -101,9 +101,6 @@ public synchronized V put(K key, V value) {
     // 没有对key判空便调用其hashCode()方法，若key为null会空指针
     int hash = key.hashCode();
     int index = (hash & 0x7FFFFFFF) % tab.length;
-
-    ...
-}
 ```
 
 `HashMap` 则同时允许key或value为 `null` ，但是 `key==null` 的节点只会存在一个且一定被存储在下标为 `0` 的位置
@@ -119,11 +116,51 @@ static final int hash(Object key) {
 
 > 因此， 使用 `HashMap` 的 `get(key)` 方法获取到的结果为 `null` 时可能有两种情况：1.map中不存在该key；2.map中存在该key但是value为 `null` ，故不能使用 `get` 方法判断key是否存在，需要使用 `containsKey` 方法
 
-### 容量设定规则
+### 散列函数
 
 常见的散列函数（将任意长度的输入转换为固定长度的输出的函数）有除留余数法、平方取中法、基数转换法、折叠法等等，其中除留余数法是最常用的也是比较简单的散列函数（至于其它的有兴趣可以去了解）， `Hashtable` 和 `HashMap` 均使用的是除留余数法，只不过计算过程有所区别
 
-除留余数法是什么？其实就是取余运算，取余为什么能够作为散列函数？假设有如此取余运算： `h(x) ＝ x mod M` ，不论关键码 `x` 取值为多少，使用 `x` 对 `M` 取余得到的结果 `h(x)` 必定满足 `0 <= h(x) < M` ，这 `M` 妥妥的不就是散列表的长度吗？
+**除留余数法**是什么？其实就是**取余运算**，取余为什么能够作为散列函数？假设有如此取余运算： `h(x) ＝ x mod M` ，不论关键码 `x` 取值为多少，使用 `x` 对 `M` 取余得到的结果 `h(x)` 必定满足 `0 <= h(x) < M` ，这 `M` 妥妥的不就可以当作散列表的长度吗？
+
+下面就来看看 `Hashtable` 是怎么使用除留余数法的
+
+```java
+// 摘自Hashtable源码，jdk1.8
+public synchronized V get(Object key) {
+    Entry<?,?> tab[] = table;
+    // 调用key的hashcode()方法获取关键码hash
+    int hash = key.hashCode();
+    // 这里对关键码hash进行了一次运算，我们先不管，很明显这就是除留余数法
+    int index = (hash & 0x7FFFFFFF) % tab.length;
+    
+    ...
+}
+```
+
+为什么需要 `(hash & 0x7FFFFFFF)` ？
+
+首先，我们都知道作为key的类必须重写 `Object` 类的 `hashCode()` 和 `equals()` 方法（原因自行了解），而这个方法的返回值类型为 `int` ，所以 `hash` 类型为 `int` ，所以 `hash` 有可能为**负数**
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        // -1
+        System.out.println(new Integer(-1).hashCode());
+    }
+}
+```
+
+如果 `hash` 作为负数直接和 `tab.length` 取余，那**结果也会是负数**，而**数组下标不可能为负数**，所以 `(hash & 0x7FFFFFFF)` 就是为了将 `hash` **变为正整数**，那么问题又来了，这个运算是怎么将 `hash` 变为正整数的呢？
+
+在Java中**整型转换为二进制后首位便是符号位（采用补码表示）** ，符号位为 `0` 表示正数，为 `1` 表示负数， `&` 运算符是按位与，将16进制数 `0x7FFFFFFF` 转换为二进制为 `0111 1111 1111 1111 1111 1111 1111 1111` ，所以 `(hash & 0x7FFFFFFF)` 运算就是将 `hash` 的二进制最高位和 `0` 进行与运算，结果永远为 `0` ，符号位变为 `0` 那自然就成为正整数了（其它位都是 `1` ，结果取决于hash对应位置的值，没有变化）
+
+了解了 `Hashtable` 的散列函数，下面再来看看 `Hashtable` 的容量设定规则，初始化时数组的大小（桶的容量）以及如何进行扩容
+
+使用除留余数法时，选择并使用合适的值作为模 `M` （也就是哈希表大小）对减小哈希冲突有比较大的影响，一般有如此结论（规律）： `合数 < 奇数 < 素数` （按照哈希冲突的概率从大到小排序）
+
+> 具体原理和证明参考：[证明为什么哈希表除m取余法的被除数为什么用素数比较好](https://blog.csdn.net/w_y_x_y/article/details/82288178)
+
+所以哈希表除留余数法的被除数 `M` 使用素数是最好的， `Hashtable` 的默认初始化大小为素数 `11` （不指定初始化容量时），但是扩容算法为 `newSize = oldSize * 2 + 1` ，这样做是因为扩容时寻找下一个合适的素数是需要进行比较复杂的运算的（寻找素数本身就是比较复杂的），这样虽然减少了冲突，但是对执行速度会有较大的影响，所以 `Hashtable` 采取了这种折中的方式，在速度和冲突率之间进行了平衡
 
 # 常见问题
 
@@ -156,15 +193,27 @@ public class test {
 
 先来看看 `asList` 方法的源码：
 
+<!-- 
+
 ![asList](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917095516221-1859915796.png)
+
+ -->
 
 再看看 `Arrays` 中的这个内部类： `ArrayList`
 
+<!-- 
+
 ![Arrays内部类ArrayList](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917094902498-499962382.png)
+
+ -->
 
 可以看到这个 `ArrayList` 继承了 `AbstractList` 类，但是它并没有重写 `AbstractList` 的 `add` 和 `remove` 方法，以 `add` 为例，在调用时其实就是调用的 `AbstractList` 的 `add` 方法，下面再来看看 `AbstractList` 的 `add` 方法：
 
+<!-- 
+
 ![AbstractList的add方法](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917095823769-1086905442.png)
+
+ -->
 
 解决办法：
 
