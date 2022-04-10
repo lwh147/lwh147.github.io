@@ -63,6 +63,68 @@ Java的Map(映射)是一种把键对象和值对象进行映射的集合，其�
 
 **LinkedHashMap**：LinkedHashMap继承于HashMap，**HashMap是无序的**，当我们希望有顺序地去存储key-value时，就需要使用LinkedHashMap了，他的存储顺序**默认为插入顺序**。LinkedHashMap其实就是可以看成HashMap的基础上，多了一个双向链表来维持顺序。他的静态内部类Entry相比HashMap多了before和after两个前后节点的指针属性，所以在插入数据时依然是按照HashMap的插入方法，并且数据的实际物理存储顺序也是随机的，但是插入时通过维护每个Entry的前后指针指向，我们就可以通过指针按照我们希望的顺序去迭代遍历数据。
 
+## `HashMap` 和 `Hashtable` 的区别
+
+### 命名
+
+`HashMap` 采用标准的驼峰命名方法，而 `Hashtable` 不是
+
+### 继承关系
+
+`Hashtable` 继承自 `Dictonary` 抽象类，而 `HashMap` 继承自 `AbstractMap` 抽象类， `AbstractMap` 实现了 `Map` 接口
+
+> 相同的是这两个类都实现了 `Cloneable` 和 `Serializable` 接口
+
+> 单从这个两个实现类以及父类的命名规则上来看， `HashMap` 相比较 `Hashtable` 也更加合理不是吗？
+
+### 线程安全
+
+`Hashtable` 更加注重安全，在修改方法上都加了 `synchronized` 关键字，所以其修改方法都是线程安全的，但是速度较慢
+
+`HashMap` 则更加注重速度，所以它没有任何保证线程安全的措施
+
+### Null 存储策略
+
+`Hashtable` 更加注重安全，所以不允许key为 `null` 或者value为 `null`
+
+```java
+// 摘自Hashtable源码，jdk1.8
+public synchronized V put(K key, V value) {
+    // Make sure the value is not null
+    if (value == null) {
+        // value为null抛出空指针异常
+        throw new NullPointerException();
+    }
+
+    // Makes sure the key is not already in the hashtable.
+    Entry<?,?> tab[] = table;
+    // 没有对key判空便调用其hashCode()方法，若key为null会空指针
+    int hash = key.hashCode();
+    int index = (hash & 0x7FFFFFFF) % tab.length;
+
+    ...
+}
+```
+
+`HashMap` 则同时允许key或value为 `null` ，但是 `key==null` 的节点只会存在一个且一定被存储在下标为 `0` 的位置
+
+```java
+// 摘自HashMap源码，jdk1.8
+static final int hash(Object key) {
+    int h;
+    // key为null时返回值都是0
+    return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+}
+```
+
+> 因此， 使用 `HashMap` 的 `get(key)` 方法获取到的结果为 `null` 时可能有两种情况：1.map中不存在该key；2.map中存在该key但是value为 `null` ，故不能使用 `get` 方法判断key是否存在，需要使用 `containsKey` 方法
+
+### 容量设定规则
+
+常见的散列函数（将任意长度的输入转换为固定长度的输出的函数）有除留余数法、平方取中法、基数转换法、折叠法等等，其中除留余数法是最常用的也是比较简单的散列函数（至于其它的有兴趣可以去了解）， `Hashtable` 和 `HashMap` 均使用的是除留余数法，只不过计算过程有所区别
+
+除留余数法是什么？其实就是取余运算，取余为什么能够作为散列函数？假设有如此取余运算： `h(x) ＝ x mod M` ，不论关键码 `x` 取值为多少，使用 `x` 对 `M` 取余得到的结果 `h(x)` 必定满足 `0 <= h(x) < M` ，这 `M` 妥妥的不就是散列表的长度吗？
+
 # 常见问题
 
 ## `UnsupportedOperationException` 异常
