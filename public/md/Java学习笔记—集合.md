@@ -160,7 +160,35 @@ public class Test {
 
 > 具体原理和证明参考：[证明为什么哈希表除m取余法的被除数为什么用素数比较好](https://blog.csdn.net/w_y_x_y/article/details/82288178)
 
-所以哈希表除留余数法的被除数 `M` 使用素数是最好的， `Hashtable` 的默认初始化大小为素数 `11` （不指定初始化容量时），但是扩容算法为 `newSize = oldSize * 2 + 1` ，这样做是因为扩容时寻找下一个合适的素数是需要进行比较复杂的运算的（寻找素数本身就是比较复杂的），这样虽然减少了冲突，但是对执行速度会有较大的影响，所以 `Hashtable` 采取了这种折中的方式，在速度和冲突率之间进行了平衡
+所以哈希表除留余数法的被除数 `M` 使用素数是最好的， `Hashtable` 的默认初始化大小为素数 `11` （不指定初始化容量时），但是扩容算法为 `newSize = oldSize * 2 + 1` ，这样做是因为扩容时寻找下一个合适的素数是需要进行比较复杂的运算的（寻找素数本身就是比较复杂的），这样虽然减少了冲突，但是对执行速度会有较大的影响，所以 `Hashtable` 采取了这种折中的方式，扩容时容量大小设置为奇数，在速度和冲突率之间进行了平衡
+
+前面说过， `HashMap` 和 `Hashtable` 采用了一样的散列函数但是在**计算方式**上有所不同，也正因为计算方式的改变，导致 `HashMap` 的容量设置规则也和 `Hashtable` 不同
+
+`HashMap` 的下标计算方式如下：
+
+```java
+// 摘自HashMap源码，jdk1.8
+final V putVal(int hash, K key, V value, boolean onlyIfAbsent,
+            boolean evict) {
+    ...
+    // i =  (n - 1) & hash] 便是下标计算方法，n是容量，hash是关键码
+    if ((p = tab[i = (n - 1) & hash]) == null)
+        tab[i] = newNode(hash, key, value, null);
+
+    ...
+}
+```
+
+乍一看这是使用了按位与进行下标运算（确实是的），好像和除留余数法没什么关系，我们来试试下面的例子
+
+```java
+public class Test {
+    public static void main(String[] args) {
+        // -1
+        System.out.println(new Integer(-1).hashCode());
+    }
+}
+```
 
 # 常见问题
 
