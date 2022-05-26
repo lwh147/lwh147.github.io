@@ -368,27 +368,15 @@ public class test {
 
 先来看看 `asList` 方法的源码：
 
-<!-- 
-
 ![asList](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917095516221-1859915796.png)
-
- -->
 
 再看看 `Arrays` 中的这个内部类： `ArrayList`
 
-<!-- 
-
 ![Arrays内部类ArrayList](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917094902498-499962382.png)
-
- -->
 
 可以看到这个 `ArrayList` 继承了 `AbstractList` 类，但是它并没有重写 `AbstractList` 的 `add` 和 `remove` 方法，以 `add` 为例，在调用时其实就是调用的 `AbstractList` 的 `add` 方法，下面再来看看 `AbstractList` 的 `add` 方法：
 
-<!-- 
-
 ![AbstractList的add方法](https://img2020.cnblogs.com/blog/2330281/202109/2330281-20210917095823769-1086905442.png)
-
- -->
 
 解决办法：
 
