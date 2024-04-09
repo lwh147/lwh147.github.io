@@ -36,8 +36,8 @@ Swagger是一个用来生成接口文档的工具，既然是生成接口文档�
 
 # 常见问题
 
-使用Swagger时由于Swagger会设置model属性的默认值为空字符串，但是在解析过程中只对 `null` 进行了判断而没有对 `""` 空字符串进行判断，导致测试时出现许多莫名奇妙的
-`java.lang. NumberFormatException: For input string: ""` 错误
+使用Swagger时由于Swagger会默认设置 `Models` 属性的默认值为空字符串 `""` ，而在生成文档的解析过程中又只对 `null`
+进行了判断而没有对空字符串进行判断，导致测试时出现许多莫名奇妙的 `java.lang. NumberFormatException: For input string: ""` 错误
 
 解决办法:
 
@@ -58,7 +58,7 @@ Swagger是一个用来生成接口文档的工具，既然是生成接口文档�
 </dependency>
 ```
 
-然后添加 1.5.21 版本，该版本已解决只判断 `null` 不判断 `""` 的问题
+然后添加 `>= 1.5.21` 版本，这些版本已解决只判断 `null` 不判断 `""` 的问题
 
 ```xml
 <dependency>
