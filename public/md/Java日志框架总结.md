@@ -237,15 +237,15 @@ class Main {
 
 # 常见问题
 
-## 日志配置文件报错： `URI is not registered (Settings | Languages & Frameworks | Schemas and DTDs）`
+**1. 日志配置文件报错：URI is not registered (Settings | Languages & Frameworks | Schemas and DTDs）**
 
 参考：https://blog.csdn.net/c_learner_/article/details/107228678
 
-## `Class path contains multiple SLF4J bindings`
+**2. Class path contains multiple SLF4J bindings**
 
 依赖中引入了多个 `SLF4J` 的实现时会出现这个警告，但 `SLF4J` 会选择其中一个进行绑定，不影响正常使用，如果要避免这个警告则需要检查Maven依赖项排除多余的日志实现仅保留一个即可
 
-## LOG_PATH_IS_UNDEFINED
+**3. LOG_PATH_IS_UNDEFINED**
 
 使用 SpringBoot + LogBack 的项目在程序启动之后总是在项目根目录产生一个 `LOG_PATH_IS_UNDEFINED` 的文件夹，原因是 Spring 容器在 Logback 初始化之后设置 `LOG_PATH` ，所以在 `logback-spring.xml` 找不到 `LOG_PATH` ，但 `bootstrap` 配置文件由父 Spring ApplicationContext 加载，会在 Logback 初始化之前加载
 

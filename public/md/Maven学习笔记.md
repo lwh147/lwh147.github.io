@@ -78,7 +78,7 @@
 
 # 常见问题
 
-## IDEA中Maven依赖莫名报错或找不到
+**1. IDEA中Maven依赖莫名报错或找不到**
 
 有时候有些依赖你确定已经导入了但是会报错找不到，此时先关闭所有IDEA窗口重启IDEA，重新打开项目，检查问题是否解决，如果没解决，根据错误信息排查错误
 
@@ -86,7 +86,7 @@
 
 如果都不行，换个Maven版本试试
 
-## IDEA中更改 `settings.xml` 文件不生效
+**2. IDEA中更改 `settings.xml` 文件不生效**
 
 在 `settings.xml` 中配置了自定义Maven仓库信息，也在IDEA中指定使用上述Maven配置文件，但是刷新重载之后不自动下载新增依赖，提示 `Could not find xxx in 你配置的Maven仓库` 或者 `Could not find xxx in Maven中央仓库` 或者 `Could not find xxx in 你其他配置文件中的仓库地址` 又或者只有 `Could not find xxx`
 

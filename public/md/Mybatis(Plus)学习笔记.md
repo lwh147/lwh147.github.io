@@ -127,38 +127,93 @@ id|name|desc|...|id(1)|goodId|type|url|...|
 
 # 分步查询
 
+> 参考：[Mybatis中使用association进行关联的几种方式](https://www.cnblogs.com/dreamyoung/p/11801950.html)
+
 针对分步查询，MyBatis也提供了支持，具体分为以下两种：
 
 ## association
 
-`association` 是MyBatis中提供的一个XML标签，它主要用来支持表关系为一对一时的子查询（分步执行的，并不是连接查询）
+`association` 是MyBatis中提供的一个XML标签，它主要用来支持**对应关系为一对一时的分步查询**，即 `association` 查询最多只会查询到一条记录，注意该查询是分步执行的（第一次查询结束后基于结果遍历执行 `association` 查询并补充到查询结果中），并不是连接查询，是需要执行多次查询的，下面举个例子：
 
-比如一个人和身份证之间是一对一的，如果要查询人的基本信息和身份证信息，就可以使用该标签：
+比如一个用户的 `id` 和用户信息之间是一对一的，查询订单信息时如果要根据 `user_id` 列查询用户的基本信息就可以使用该标签：
 
 ```xml
-<resultMap id="associationResultMap" type="com.test.db.Person">
-<id column="id" jdbcType="INTEGER" property="id" />
-<result column="name" jdbcType="VARCHAR" property="name" />
-<result column="sex" jdbcType="VARCHAR" property="sex" />
-<result column="birthday" jdbcType="DATE" property="birthday" />
-<association property="idCard" column="card_id" javaType="com.test.db.IdCard">
-    <id column="cid" jdbcType="INTEGER" property="id" />
-    <result column="number" jdbcType="VARCHAR" property="number" />
-    <result column="address" jdbcType="VARCHAR" property="address" />
-    <result column="expiredTime" jdbcType="DATE" property="expiredtime" />
-</association>
+<resultMap id="associationResultMap" type="com.test.db.Order">
+    <id column="id" property="id"/>
+    ...
+    <association column="user_id" property="user" select="getUser"></association>
+    ...
 </resultMap>
 
-<select id="findPersonByName" parameterType="java.lang.String" resultMap="associationResultMap">
-select p.*,card.id as cid,card.number as number,card.expiredTime expiredTime from person p,id_card card where p.card_id=card.id and name=#{name,jdbcType=VARCHAR}
+<select id="getOrder" resultMap="associationResultMap" parameterType="java.lang.Long">
+    SELECT * FROM order_table WHERE id = #{id}
+</select>
+
+<select id="getUser" resultType="com.test.db.User" parameterType="java.lang.Long">
+    SELECT * FROM user_table WHERE id = #{id}
 </select>
 ```
 
+这里关联的查询 `getUser` 用到的查询条件只有一个， `column` 属性直接传所需的列名或列别名即可，那需要多个参数的时候该怎么传参呢？看下官方文档中对 `association` 的 `column` 属性的解释：
+
+> `column` ：数据库的列名或者列标签别名。与传递给 `resultSet.getString(columnName)` 的参数名称相同。
+> 注意： 在处理组合键时，您可以使用 `column="{prop1=col1, prop2=col2}"` 这样的语法，设置多个列名传入到嵌套查询语句。这就会把prop1和prop2设置到目标嵌套选择语句的参数对象中。
+
+那么当出现需要多个参数时就可以这样写：
+
+```xml
+<resultMap id="associationResultMap" type="com.test.db.Order">
+    <id column="id" property="id"/>
+    ...
+    <association column="{param1=user_id,param2=user_name}" property="user" select="getUser"></association>
+    ...
+</resultMap>
+
+<select id="getOrder" resultMap="associationResultMap" parameterType="java.lang.Long">
+    SELECT * FROM order_table WHERE id = #{id}
+</select>
+
+<select id="getUser" resultType="com.test.db.User">
+    SELECT * FROM user_table WHERE id = #{param1} and name = #{param2}
+</select>
+```
+
+其中 `user_id` 和 `user_name` 是 `order` 表存储的两个用户信息列， `param1` 和 `param2` 是传给 `getUser` 的两个参数名称，需要和 `getUser` 在Java接口文件方法声明中参数列表的参数名称相对应（单个参数时可以不用）
+
 ## collection
+
+`collection` 和 `association` 使用语法完全一致，不过 `collection` 主要用来支持**对应关系为一对多时的分步查询**，比如查订单信息时要查订单项，一个订单可能对应多个订单项，这时就可以用 `collection` 标签
+
+```xml
+<resultMap id="collectionResultMap" type="com.test.db.Order">
+    <id column="id" property="id"/>
+    ...
+    <collection column="id" property="orderItemList" ofType="com.test.db.OrderItem" select="listOrderItemByOrderId"></collection>
+    ...
+</resultMap>
+
+<select id="getOrder" resultMap="collectionResultMap" parameterType="java.lang.Long">
+    SELECT * FROM order_table WHERE id = #{id}
+</select>
+
+<select id="listOrderItemByOrderId" resultType="com.test.db.OrderItem" parameterType="java.lang.Long">
+    SELECT * FROM order_item_table WHERE order_id = #{id}
+</select>
+```
+
+需要多个参数时用法也和 `association` 完全一致
+
+# `saveOrUpdate(T entity, Wrapper<T> wrapper)` 步骤详解
+* 根据 `enitity` 和 `wrapper` 进行更新
+* 如果更新成功则直接return
+* 如果失败，会根据 `entity` 实例中是否存在主键进行判断
+* 如果存在主键 `id`，则根据主键`id` 进行一次查询，判断是否存在，存在执行更新，不存在就执行插入
+* 返回执行结果 
+ 
 
 # 其它问题
 
-## Parameter 'XXX' not found. Available parameters are [arg1, arg0, param1, param2]
+**1. Parameter 'XXX' not found. Available parameters are [arg1, arg0, param1, param2]**
 
 在传递多个参数的时候，Mapper中需要使用 `@Param(参数别名)` 对参数进行注解，避免产生歧义，如
 
@@ -166,15 +221,48 @@ select p.*,card.id as cid,card.number as number,card.expiredTime expiredTime fro
 List<User> select(@Param("uuid")String uuid, @Param("name")String name);
 ```
 
-## There is no getter for property named "xxx" in class "xxx"
+**2. There is no getter for property named "xxx" in class "xxx"**
 
 原因有以下两种：
 
 * xml文件中的引用属性名与Bean中的属性名不符
 *  `parameterType` 属性未指定
 
-## 增删改操作返回的影响行数
+**3. 增删改操作返回的影响行数**
 
 使用sql重复进行 `UPDATE` 操作的时候，如 `UPDATE test SET cid = '5244'` 执行两次的时候发现，第二次 `UPDATE` 语句返回的影响行数为 `0` ，但是使用MyBatis的时候，结果却不是这样的，执行两次的时候，发现 `UPDATE` 返回的影响行数始终是 `1`
 
 原因是使用MyBatis返回来的是条件匹配到的行数，所以返回的始终是 `1` ，如果想要返回受影响的行数，需要在MyBatis连接数据库的时候加上参数： `jdbc:mysql://${jdbc.host}/${jdbc.db}?useAffectedRows=true`
+
+**4. Invalid bound statement (not found) 出现原因**
+
+* mapper.xml中的`namespace`标签和mapper接口文件不一致
+* mapper接口文件中的方法名和mapper.xml中的`id`标签不一致
+* mapper.xml没有被编译打包进jar包中
+
+检查 `target` 目录或生成的jar包里是否存在对应xml文件，如果不存在则 `clean` 之后重新打包，重新打包后还是不存在，检查 `pom.xml` 文件，配置 `resource` ：
+
+```xml
+<resources>
+    <resource>
+        <directory>src/main/java</directory>
+        <includes>
+            <include>**/*.properties</include>
+            <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+    </resource>
+    <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+            <include>**/*.properties</include>
+            <include>**/*.xml</include>
+        </includes>
+        <filtering>false</filtering>
+    </resource>
+</resources>
+```
+
+**5. `@EnumValue` 失效**
+
+要配置 `mybatis-plus.type-enums-package` 指定枚举类所在包 `@EnumValue` 才会生效

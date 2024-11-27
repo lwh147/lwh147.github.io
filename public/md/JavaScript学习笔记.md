@@ -401,6 +401,6 @@ function extractObjFromObjArrayByProps(arr, props) {
 
 # 常见问题
 
-## Promise对象执行了 .then 又执行了 .catch
+**1. Promise对象执行了 .then 又执行了 .catch**
 
 Promise会自动捕获内部异常， `then` 函数中如果有异常代码，Promise就会自动捕获，这样就会造成不仅执行了 `then` 函数又执行了 `catch` 函数的现象，也就是说 `catch` 不仅对Promise对象的异步操作内容本身的异常进行捕获，也会捕获 `resolve` 或 `rejected` 或 `then` 回调函数中的错误

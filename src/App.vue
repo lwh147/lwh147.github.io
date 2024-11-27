@@ -1,7 +1,8 @@
 <template>
   <div id="app">
     <div id="page-body">
-      <show-down url="md/hello.md" highlight-style="arta"/>
+      <!--<show-down url="md/hello.md" highlight-style="arta"/>-->
+      <show-down url="README.md" highlight-style="arta"/>
     </div>
     <music-player :fixed="true" server="netease" type="playlist" id="905974655"/>
     <spring-loader id="loader" theme="white" :show="springLoaderShow"/>
@@ -9,9 +10,9 @@
 </template>
 
 <script>
-import ShowDown from '@/components/show-down'
-import MusicPlayer from "@/components/music-player";
-import SpringLoader from "@/components/spring-loader";
+import ShowDown from '@/components/ShowMarkDown.vue';
+import MusicPlayer from '@/components/MusicPlayer.vue';
+import SpringLoader from '@/components/SpringLoader.vue';
 
 export default {
   name: 'App',
@@ -23,21 +24,21 @@ export default {
   data() {
     return {
       springLoaderShow: true
-    }
+    };
   },
   mounted() {
-    this.init()
+    this.init();
   },
   methods: {
     init: function () {
       // 初始化结束
       setTimeout(() => {
-            this.springLoaderShow = false
+            this.springLoaderShow = false;
           },
-          300)
+          300);
     }
   }
-}
+};
 </script>
 
 <style lang="scss">

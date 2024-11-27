@@ -41,3 +41,13 @@ private: 只能自己
 | int | short | long | char | float | double | boolean   | byte |
 | --- | ----- | ---- | ---- | ----- | ------ | --------- | ---- |
 | 4   | 2     | 8    | 2    | 4     | 8      | 1     | 1    |
+
+# Java 8 新特性之接口默认方法和静态方法
+
+> 参考：[Java 8 新特性之接口默认方法和静态方法](https://blog.csdn.net/weixin_38308374/article/details/112440657)
+
+# Jackson JSON工具
+
+## Using `@JsonFormat` to serialize Java Enum As Object
+
+> 参考：[Using @JsonFormat to serialize Java Enum As Object](https://www.logicbig.com/tutorials/misc/jackson/json-format-enum-as-object.html)

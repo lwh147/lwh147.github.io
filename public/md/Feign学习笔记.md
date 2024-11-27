@@ -26,6 +26,6 @@
 
 # 常见问题
 
-## 使用 Feign 远程调用时报错：Service id not legal hostname(xx_sss)
+**1. 使用 Feign 远程调用时报错：Service id not legal hostname(xx_sss)**
 
 原因是 Feign 不支持下划线 "_"，支持 "-"，改成 "xx-sss" 即可

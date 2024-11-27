@@ -24,6 +24,9 @@ git pull origin dev --allow-unrelated-histories
 # 设置本地分支的远程追踪分支
 git branch --set-upstream-to=origin/分支名
 # 设置追踪分支之后pull、push命令的origin默认都是当前分支的远程跟踪分支
+
+# 强制使用本地仓库覆盖远程仓库
+git push -f
 ```
 
 Git命令详情：[Git 常用命令大全](https://blog.csdn.net/halaoda/article/details/78661334)
@@ -57,13 +60,13 @@ gitlab**网页上的merge操作**如果出现冲突，则会要求手动修改�
 
 # 常见问题
 
-## 文件名太长无法处理：file name too long
+**1. 文件名太长无法处理：file name too long**
 
 在git bash中，运行命令： `git config --global core.longpaths true`
 
 说明：--global是该参数的使用范围，如果只想对本版本库设置该参数，只要在上述命令中去掉--global即可
 
-## 为已被纳入版本控制的文件添加.gitignore规则后使其生效
+**2. 为已被纳入版本控制的文件添加.gitignore规则后使其生效**
 
 对于一些已经添加到git版本控制中的文件或文件夹，如果想取消其版本控制，在添加.gitignore规则后这些文件或文件夹还是会被追踪，提交时还会出现在commit列表中
 
